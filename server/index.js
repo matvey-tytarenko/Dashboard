@@ -1,27 +1,28 @@
-// MAIN FILE
 const express = require("express");
-const cors = require("cors");
 const mongoose = require("mongoose");
-const router = require("./Routes/Route");
-
-// CONNECT CONFIG FILE
+const cors = require("cors");
+const router = require("./Routes/UserRoutes");
 require("dotenv").config();
 
-// CREATE APP
+// Create App
 const app = express();
+let connection = true;
 
-// MIDDLEWARES
+// Middlewares
 app.use(express.json());
 app.use(cors());
 app.use('/api/auth', router)
 
-// MONGO CONNECTING
+// DataBase Connection
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
-    console.log(`DataBase is connecting!`);
+    console.log(`DataBase connection: ${connection}`);
   })
-  .catch((error) => console.error(`DataBase Error: ${error}`));
+  .catch((err) => {
+    connection = false;
+    console.log(`DataBase connection: ${connection}\n ${err.message}`);
+  });
 
-// EXPORT CCONSTANT
+// Export App
 module.exports = app;
